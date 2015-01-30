@@ -97,11 +97,8 @@ class ScaledSVGSurface(cairosvg.surface.SVGSurface):
 
 
 class SVGImage(object):
-    def __init__(self, svg_data, base_url):
-        # Don’t pass data URIs to CairoSVG.
-        # They are useless for relative URIs anyway.
-        self._base_url = (
-            base_url if not base_url.lower().startswith('data:') else None)
+    def __init__(self, svg_data, base_url=None):
+        self._base_url = base_url
         self._svg_data = svg_data
 
         # TODO: find a way of not doing twice the whole rendering.
@@ -154,7 +151,7 @@ def get_image_from_uri(cache, url_fetcher, url, forced_mime_type=None):
             if mime_type == 'image/svg+xml':
                 string = (result['string'] if 'string' in result
                           else result['file_obj'].read())
-                image = SVGImage(string, url)
+                image = SVGImage(string)
             elif mime_type == 'image/png':
                 obj = result.get('file_obj') or BytesIO(result.get('string'))
                 try:
